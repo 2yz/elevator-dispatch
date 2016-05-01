@@ -15,7 +15,6 @@ class Cluster {
   update () {
     for (var i = 1; i <= this.floors; i++) {
       if (this._request[i]['up'] && this._dispatch[i]['up'] === null) {
-        console.log('update:', i)
         this.dispatchElevator(i, 'up')
       }
       if (this._request[i]['down'] && this._dispatch[i]['down'] === null) {
@@ -24,29 +23,29 @@ class Cluster {
     }
   }
   dispatchElevator (floor, direction) {
-    console.log('dispatchElevator:', floor, direction)
     var selectedElevator = 0
-    var minDistance = this.floors * 2
+    var minDistance = Number.MAX_VALUE
     for (var i = 0; i < this.elevator.length; i++) {
       var elevator = this.elevator[i]
       var distance = Number.MAX_VALUE
       if (elevator.direction === null || elevator.direction === direction) {
         distance = Math.abs(floor - elevator.floor)
       } else {
-        distance = Math.abs(elevator.nextFloor - floor) + Math.abs(elevator.nextFloor - elevator.floors)
+        distance = Math.abs(elevator.getTargetFloor() - floor) + Math.abs(elevator.getTargetFloor() - elevator.floor)
       }
       if (distance < minDistance) {
         selectedElevator = i
         minDistance = distance
       }
     }
+    console.log('dispatchElevator:', selectedElevator)
     this._dispatch[floor][direction] = selectedElevator
-    if (elevator.direction === null) {
+    if (this.elevator[selectedElevator].direction === null) {
       var delta = floor - this.elevator[selectedElevator].floor
       if (delta > 0) {
-        this.elevator[selectedElevator].run('up')
+        this.elevator[selectedElevator].run()
       } else if (delta < 0) {
-        this.elevator[selectedElevator].run('down')
+        this.elevator[selectedElevator].run()
       } else {
         this.elevator[selectedElevator].open(direction)
       }

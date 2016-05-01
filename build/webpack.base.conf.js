@@ -15,7 +15,7 @@ module.exports = {
   externals: {
     // require("jquery") is external and available
     //  on the global var jQuery
-    'zepto': 'Zepto'
+    'jquery': 'jQuery'
   },
   resolve: {
     extensions: ['', '.js', '.vue'],

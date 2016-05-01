@@ -5,7 +5,7 @@ export default class Elevator {
     this.name = name || 'Elevator'
     this.floor = floor || 1
     this.floors = floors || 20
-    this.nextFloor = 0
+    // this.targetFloor = 0
     this.enabled = true
     this.state = 'idle' // State: run wait idle stop
     this.direction = null // Direction: 'up' 'down' null
@@ -14,19 +14,42 @@ export default class Elevator {
     for (var i = 1; i <= this.floors; i++) {
       this._request[i] = false
     }
-    this._run = null
   }
-  run (runDirection) {
-    this.state = 'run'
-    this.direction = runDirection
-    this._move()
+  run () {
+    if (this.state !== 'run') {
+      this.state = 'run'
+      this._setDirection()
+      this._move()
+    }
   }
   open (reqDirection) {
     this.state = 'run'
     this.direction = reqDirection
     this._wait()
   }
+  request (floor) {
+    this._request.splice(floor, 1, true)
+    this.run()
+  }
+  getTargetFloor () {
+    if (this.direction === 'up') return this._getTargetFloorAbove()
+    if (this.direction === 'down') return this._getTargetFloorBelow()
+    return this.floor
+  }
+  _getTargetFloorAbove () {
+    for (var i = this.floors; i >= this.floor; i--) {
+      if (this._cluster._dispatch[i]['up'] === this.index || this._cluster._dispatch[i]['down'] === this.index || this._request[i]) return i
+    }
+    return this.floor
+  }
+  _getTargetFloorBelow () {
+    for (var i = 1; i <= this.floor; i++) {
+      if (this._cluster._dispatch[i]['up'] === this.index || this._cluster._dispatch[i]['down'] === this.index || this._request[i]) return i
+    }
+    return this.floor
+  }
   _move () {
+    this.state = 'run'
     console.log('_move:', this.name)
     var tmp
     if (this.direction === 'up') {
@@ -44,6 +67,9 @@ export default class Elevator {
         this._wait()
       } else if (this._isRequestOnDirection()) {
         this._move()
+      } else if (this._isRequestOppoDirection()) {
+        this.direction = this.getOppositeDirection()
+        this._move()
       } else {
         this._idle()
       }
@@ -54,6 +80,7 @@ export default class Elevator {
     this.direction = null
   }
   _wait () {
+    this.state = 'wait'
     this.finishRequest(this.floor, this.direction)
     this.isDoorOpen = true
     setTimeout(() => {
@@ -62,13 +89,16 @@ export default class Elevator {
     setTimeout(() => {
       if (this._isRequestOnDirection()) {
         this._move()
+      } else if(this._isRequestOppoDirection()) {
+        this.direction = this.getOppositeDirection()
+        this._move()
       } else {
         this._idle()
       }
     }, 3000)
   }
   finishRequest (floor, direction) {
-    this._request[floor] = false
+    this._request.splice(floor, 1, false)
     this._cluster.finishRequest(floor, direction)
   }
   _isRequestOnFloor () {
@@ -87,6 +117,11 @@ export default class Elevator {
     if (this.direction === 'down') return this._isRequestBelow()
     return false
   }
+  _isRequestOppoDirection () {
+    if (this.direction === 'down') return this._isRequestAbove()
+    if (this.direction === 'up') return this._isRequestBelow()
+    return false
+  }
   _isRequestAbove () {
     for (var i = this.floor + 1; i <= this.floors; i++) {
       if (this._cluster._dispatch[i]['up'] === this.index || this._cluster._dispatch[i]['down'] === this.index || this._request[i]) return true
@@ -98,6 +133,14 @@ export default class Elevator {
       if (this._cluster._dispatch[i]['up'] === this.index || this._cluster._dispatch[i]['down'] === this.index || this._request[i]) return true
     }
     return false
+  }
+  _setDirection () {
+    if (this.direction !== null) return
+    if (this._isRequestAbove()) {
+      this.direction = 'up'
+    } else if (this._isRequestBelow()) {
+      this.direction = 'down'
+    }
   }
   getOppositeDirection () {
     if (this.direction === 'up') return 'down'

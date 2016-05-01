@@ -5,8 +5,14 @@
       <div v-for="floor in floorArr" class="floor-container am-vertical-align">
         <div class="am-vertical-align-middle">
           <div style="display:inline-block;width: 24px;text-align: center;">{{floor.name}}</div>
-          <button v-on:click="request(floor.name,'up')" type="button" class="am-btn am-btn-default am-btn-xs" v-bind:class="{ 'active': cluster._request[floor.name]['up'] }">▲</button>
-          <button v-on:click="request(floor.name,'down')" type="button" class="am-btn am-btn-default am-btn-xs" v-bind:class="{ 'active': cluster._request[floor.name]['down'] }">▼</button>
+          <button v-on:click="request(floor.name,'up')" type="button" class="am-btn am-btn-xs floor-btn"
+                  v-bind:class="{ 'am-btn-default': !cluster._request[floor.name]['up'], 'am-btn-warning': cluster._request[floor.name]['up'] }">
+            ▲
+          </button>
+          <button v-on:click="request(floor.name,'down')" type="button" class="am-btn am-btn-xs floor-btn"
+                  v-bind:class="{ 'am-btn-default': !cluster._request[floor.name]['down'], 'am-btn-warning': cluster._request[floor.name]['down'] }">
+            ▼
+          </button>
         </div>
       </div>
     </div>
@@ -20,6 +26,10 @@
   .floor-container {
     position: relative;
     height: 50px;
+  }
+
+  .floor-btn {
+    padding: 6px;
   }
 
   .am-btn.active {
