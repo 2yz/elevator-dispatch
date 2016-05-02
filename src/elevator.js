@@ -27,6 +27,16 @@ export default class Elevator {
     this.direction = reqDirection
     this._wait()
   }
+  openDoor () {
+    if (this.state !== 'run') {
+      this.isDoorOpen = true
+    }
+  }
+  closeDoor () {
+    if (this.state !== 'run') {
+      this.isDoorOpen = false
+    }
+  }
   request (floor) {
     this._request.splice(floor, 1, true)
     this.run()
@@ -89,7 +99,7 @@ export default class Elevator {
     setTimeout(() => {
       if (this._isRequestOnDirection()) {
         this._move()
-      } else if(this._isRequestOppoDirection()) {
+      } else if (this._isRequestOppoDirection()) {
         this.direction = this.getOppositeDirection()
         this._move()
       } else {
