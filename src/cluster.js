@@ -1,3 +1,5 @@
+import {DIRECTION} from './util'
+
 class Cluster {
   constructor (floors) {
     this.floors = floors || 20
@@ -14,11 +16,11 @@ class Cluster {
   }
   update () {
     for (var i = 1; i <= this.floors; i++) {
-      if (this._request[i]['up'] && this._dispatch[i]['up'] === null) {
-        this.dispatchElevator(i, 'up')
+      if (this._request[i][DIRECTION.UP] && this._dispatch[i][DIRECTION.UP] === null) {
+        this.dispatchElevator(i, DIRECTION.UP)
       }
-      if (this._request[i]['down'] && this._dispatch[i]['down'] === null) {
-        this.dispatchElevator(i, 'down')
+      if (this._request[i][DIRECTION.DOWN] && this._dispatch[i][DIRECTION.DOWN] === null) {
+        this.dispatchElevator(i, DIRECTION.DOWN)
       }
     }
   }
@@ -40,16 +42,9 @@ class Cluster {
     }
     console.log('dispatchElevator:', selectedElevator)
     this._dispatch[floor][direction] = selectedElevator
-    if (this.elevator[selectedElevator].direction === null) {
-      var delta = floor - this.elevator[selectedElevator].floor
-      if (delta > 0) {
-        this.elevator[selectedElevator].run()
-      } else if (delta < 0) {
-        this.elevator[selectedElevator].run()
-      } else {
-        this.elevator[selectedElevator].open(direction)
-      }
-    }
+  }
+  changeDispatch (floor, direction, elevatorIndex) {
+    if (this._dispatch[floor][direction] !== elevatorIndex) this._dispatch[floor][direction] = elevatorIndex
   }
   request (name, direction) {
     this._request[name][direction] = true

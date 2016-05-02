@@ -1,13 +1,15 @@
 <template xmlns:v-bind="http://www.w3.org/1999/xhtml" xmlns:v-on="http://www.w3.org/1999/xhtml">
   <div style="text-align: center;">{{elevator.name}}</div>
   <div class="elevator-container">
-    <div v-for="floor in floorArr" v-on:click="open()" class="floor-container">
+    <div v-for="floor in floorArr" class="floor-container"
+         v-bind:class="{ 'request': elevator._request[floor.name] }">
       <div class="elevator-door left"
            v-bind:class="{ 'open': elevator.isDoorOpen && elevator.floor == floor.name }"></div>
       <div class="elevator-door right"
            v-bind:class="{ 'open': elevator.isDoorOpen && elevator.floor == floor.name }"></div>
     </div>
     <div v-on:click="operate()" class="elevator-instance"
+         v-bind:class="{ 'warn': elevator._warn }"
          v-bind:style="{ bottom: (elevator.floor - 1) * 50 + 'px' }"></div>
   </div>
   <div class="am-modal am-modal-no-btn" tabindex="-1" id="elevator-{{elevator.index}}-panel">
@@ -28,7 +30,10 @@
           <div>
             <button v-on:click="openDoor()" type="button" class="am-btn am-btn-sm elevator-btn am-btn-default">开</button>
             <button v-on:click="closeDoor()" type="button" class="am-btn am-btn-sm elevator-btn am-btn-default">关</button>
-            <button v-on:click="warn()" type="button" class="am-btn am-btn-sm elevator-btn am-btn-default"><i class="am-icon-bell-o"></i></button>
+            <button v-on:click="warn()" type="button" class="am-btn am-btn-sm elevator-btn am-btn-default"
+                    v-bind:class="{ 'am-btn-default': !elevator._warn, 'am-btn-warning': elevator._warn }">
+              <i class="am-icon-bell-o"></i>
+            </button>
           </div>
         </div>
       </div>
@@ -49,6 +54,11 @@
   .floor-container {
     position: relative;
     height: 50px;
+    transition: 0.5s all ease-in-out;
+  }
+
+  .floor-container.request {
+    background-color: rgba(243, 123, 29, 0.15);
   }
 
   .elevator-container {
@@ -59,11 +69,15 @@
     position: absolute;
     width: 100%;
     height: 50px;
-    background-color: rgba(255, 165, 0, 0.5);
-    transition: 3s all ease-in-out;
+    background-color: rgba(14, 144, 210, 0.3);
+    transition: 1s all ease-in-out;
     left: 0;
     right: 0;
     bottom: 0;
+  }
+
+  .elevator-instance.warn {
+    background-color: rgba(221, 81, 76, 0.5);
   }
 
   .elevator-door {
@@ -114,9 +128,6 @@
       }
     },
     methods: {
-      open () {
-        this.elevator.isDoorOpen = !this.elevator.isDoorOpen
-      },
       openDoor () {
         this.elevator.openDoor()
       },
@@ -124,12 +135,15 @@
         this.elevator.closeDoor()
       },
       warn () {
-        console.log('warn')
+        if (this.elevator._warn) {
+          this.elevator.dismissWarn()
+        } else {
+          this.elevator.warn()
+        }
       },
       operate () {
         var id = `#elevator-${this.elevator.index}-panel`
         $(id).modal()
-        console.log('operate')
       },
       request (floor) {
         this.elevator.request(floor)
