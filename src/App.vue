@@ -7,11 +7,11 @@
           <div style="display:inline-block;width: 24px;text-align: center;">{{floor.name}}</div>
           <button v-on:click="request(floor.name,'up')" type="button" class="am-btn am-btn-xs floor-btn"
                   v-bind:class="{ 'am-btn-default': !cluster._request[floor.name]['up'], 'am-btn-warning': cluster._request[floor.name]['up'] }">
-            ▲
+            △
           </button>
           <button v-on:click="request(floor.name,'down')" type="button" class="am-btn am-btn-xs floor-btn"
                   v-bind:class="{ 'am-btn-default': !cluster._request[floor.name]['down'], 'am-btn-warning': cluster._request[floor.name]['down'] }">
-            ▼
+            ▽
           </button>
         </div>
       </div>

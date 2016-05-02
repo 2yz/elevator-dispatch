@@ -10,19 +10,26 @@
     <div v-on:click="operate()" class="elevator-instance"
          v-bind:style="{ bottom: (elevator.floor - 1) * 50 + 'px' }"></div>
   </div>
-  <div class="am-popup" id="elevator-{{elevator.index}}-panel">
-    <div class="am-popup-inner">
-      <div class="am-popup-hd">
-        <h4 class="am-popup-title">{{elevator.name}}</h4>
-      <span data-am-modal-close class="am-close">&times;</span>
+  <div class="am-modal am-modal-no-btn" tabindex="-1" id="elevator-{{elevator.index}}-panel">
+    <div class="am-modal-dialog">
+      <div class="am-modal-hd">
+        {{elevator.name}}<a href="javascript: void(0)" class="am-close am-close-spin" data-am-modal-close>&times;</a>
       </div>
-      <div class="am-popup-bd">
-        <!--v-bind:class="{ 'active': cluster._request[floor.name]['up'] }"-->
-        <div v-for="floor in floorArr" class="elevator-btn-container">
-          <button v-on:click="request(floor.name)" type="button" class="am-btn am-btn-sm elevator-btn"
-                  v-bind:class="{ 'am-btn-default': !elevator._request[floor.name], 'am-btn-warning': elevator._request[floor.name] }">
-            {{floor.name}}
-          </button>
+      <div class="am-modal-bd">
+        <div style="width: 200px;margin: auto;">
+          <div>
+            <div v-for="floor in floorArr" class="elevator-btn-container">
+              <button v-on:click="request(floor.name)" type="button" class="am-btn am-btn-sm elevator-btn"
+                      v-bind:class="{ 'am-btn-default': !elevator._request[floor.name], 'am-btn-warning': elevator._request[floor.name] }">
+                {{floor.name}}
+              </button>
+            </div>
+          </div>
+          <div>
+            <button v-on:click="openDoor()" type="button" class="am-btn am-btn-sm elevator-btn am-btn-default">开</button>
+            <button v-on:click="closeDoor()" type="button" class="am-btn am-btn-sm elevator-btn am-btn-default">关</button>
+            <button v-on:click="warn()" type="button" class="am-btn am-btn-sm elevator-btn am-btn-default"><i class="am-icon-bell-o"></i></button>
+          </div>
         </div>
       </div>
     </div>
@@ -61,7 +68,7 @@
 
   .elevator-door {
     position: absolute;
-    width: 40%;
+    width: 39%;
     top: 3%;
     bottom: 3%;
     background-color: rgba(169, 169, 169, 0.5);
@@ -109,6 +116,15 @@
     methods: {
       open () {
         this.elevator.isDoorOpen = !this.elevator.isDoorOpen
+      },
+      openDoor () {
+        this.elevator.openDoor()
+      },
+      closeDoor () {
+        this.elevator.closeDoor()
+      },
+      warn () {
+        console.log('warn')
       },
       operate () {
         var id = `#elevator-${this.elevator.index}-panel`
