@@ -38,7 +38,6 @@
 </style>
 
 <script type="text/ecmascript-6">
-  import Hello from './components/Hello.vue'
   import ElevatorVue from './components/Elevator.vue'
   import cluster from './cluster'
   import Elevator from './elevator'
@@ -85,7 +84,6 @@
       }
     },
     components: {
-      Hello,
       ElevatorVue
     }
   }

@@ -1,4 +1,4 @@
-import {DIRECTION} from './util'
+import {DIRECTION} from './constant'
 
 class Cluster {
   constructor (floors) {
