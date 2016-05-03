@@ -137,7 +137,6 @@ class Elevator {
     this._wait = null
   }
   enterIdle () {
-    if (this.isDoorOpen) this.isDoorOpen = false
     this.direction = DIRECTION.NULL
     this._idle = setInterval(() => {
       this.idle()
@@ -151,6 +150,7 @@ class Elevator {
     }
   }
   exitIdle () {
+    if (this.isDoorOpen) this.isDoorOpen = false
     clearInterval(this._idle)
     this._idle = null
   }
