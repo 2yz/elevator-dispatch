@@ -60,6 +60,7 @@
       console.log(this.cluster)
     },
     ready () {
+      alert('点击蓝色方块可以显示电梯控制面板!')
     },
     data () {
       return {
