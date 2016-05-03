@@ -1,4 +1,4 @@
-import {STATE, DIRECTION} from './util'
+import {STATE, DIRECTION} from './constant'
 
 class Elevator {
   constructor (cluster, index, name, floor, floors) {
@@ -137,6 +137,7 @@ class Elevator {
     this._wait = null
   }
   enterIdle () {
+    if (this.isDoorOpen) this.isDoorOpen = false
     this.direction = DIRECTION.NULL
     this._idle = setInterval(() => {
       this.idle()
