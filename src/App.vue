@@ -63,11 +63,6 @@
     },
     data () {
       return {
-        test: {
-          test: {
-            a: 0
-          }
-        },
         floorArr: [],
         elevatorArr: [],
         cluster: {}
